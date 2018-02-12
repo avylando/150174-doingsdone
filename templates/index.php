@@ -30,10 +30,7 @@
     <table class="tasks">
         <?php foreach($tasks as $task): ?>
 
-            <tr class="tasks__item task
-            <?php if ($task['complete']): ?>
-                task--completed
-            <?php endif; ?>
+            <tr class="tasks__item task <?php $task['complete'] ? print('task--completed') : ''; ?>
             <?php if (count_days($task['date']) <= 1 && $task['date'] !== ''): ?>
                 task--important
             <?php endif; ?>
@@ -47,9 +44,7 @@
 
                 <td class="task__date"><?=strip_tags($task['date'])?></td>
 
-                <td class="task__controls">
-                    <img src='<?=$task['task-image']?>' width='30' height='30' alt='alt'>
-                </td>
+                <td class="task__controls"></td>
             </tr>
         <?php endforeach; ?>
     </table>

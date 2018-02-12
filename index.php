@@ -6,7 +6,63 @@ require_once 'data.php';
 date_default_timezone_set('Europe/Moscow');
 
 $filtered_tasks = [];
-$modal = null;
+$modal_add_add = null;
+
+if (isset($_GET['add'])) {
+    $modal_add = render_template('templates/add-task.php', [
+        'projects' => array_slice($projects, 1)
+    ]);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['add-task'])) {
+        $task = $_POST;
+        $required = ['title', 'category'];
+        $dict = [
+            'title' => 'название задачи',
+            'category' => 'Выберите проект'
+        ];
+
+        $errors = [];
+
+        foreach ($required as $field) {
+            if (empty($task[$field])) {
+                $errors[$field] = 'Заполните ' . $dict[$field];
+            }
+        }
+
+        if (is_uploaded_file($_FILES['task-image']['tmp_name'])) {
+            $tmp_name = $_FILES['task-image']['tmp_name'];
+            $path = 'img/' . $_FILES['task-image']['name'];
+
+            $file_info = finfo_open(FILEINFO_MIME_TYPE);
+            $file_type = finfo_file($file_info, $tmp_name);
+
+            if ($file_type !== 'image/jpeg' && $file_type !== 'image/png' && $file_type !== 'image/gif') {
+                $errors['task-image'] = 'Неподдерживаемый формат. Загрузите файл в формате JPG/PNG/GIF';
+            } else {
+                move_uploaded_file($tmp_name, $path);
+                $task['task-image'] = $path;
+            }
+        }
+
+        if (count($errors)) {
+            $modal_add = render_template('templates/add-task.php', [
+                'task' => $task,
+                'errors' => $errors,
+                'projects' => array_slice($projects, 1)
+            ]);
+        } else {
+            array_unshift($tasks, [
+            'title' => $task['title'],
+            'date' => $task['date'],
+            'category' => $task['category'],
+            'task-image' => $task['task-image'],
+            'complete' => false
+            ]);
+        }
+    }
+}
 
 if (isset($_GET['id'])) {
     $project_id = $_GET['id'];
@@ -35,71 +91,12 @@ if (isset($_GET['id'])) {
     ]);
 }
 
-if (isset($_GET['add'])) {
-    $modal = render_template('templates/add-task.php', [
-        'projects' => array_slice($projects, 1)
-    ]);
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['add-task'])) {
-        $task = $_POST;
-        $required = ['title', 'category'];
-        $dict = [
-            'title' => 'название задачи',
-            'category' => 'Выберите проект'
-        ];
-
-        $errors = [];
-
-        foreach ($required as $field) {
-            if (empty($task[$field])) {
-                $errors[$field] = 'Заполните ' . $dict[$field];
-            }
-        }
-
-        if (is_uploaded_file($_FILES['task-image']['tmp_name'])) {
-            $tmp_name = $_FILES['task-image']['tmp_name'];
-            $path = $_FILES['task-image']['name'];
-
-            $file_info = finfo_open(FILEINFO_MIME_TYPE);
-            $file_type = finfo_file($file_info, $tmp_name);
-
-            if ($file_type !== 'image/jpeg' && $file_type !== 'image/png' && $file_type !== 'image/gif') {
-                $errors['task-image'] = 'Неподдерживаемый формат. Загрузите файл в формате JPG/PNG/GIF';
-            } else {
-                move_uploaded_file($tmp_name, '/' . $path);
-                $task['task-image'] = '/' . $path;
-            }
-        }
-
-        if (count($errors)) {
-            $modal = render_template('templates/add-task.php', [
-                'task' => $task,
-                'errors' => $errors,
-                'projects' => array_slice($projects, 1)
-            ]);
-        } else {
-            $modal = null;
-        }
-
-        array_unshift($tasks, [
-            'title' => $task['title'],
-            'date' => $task['date'],
-            'category' => $task['category'],
-            'task-image' => $task['task-image'],
-            'complete' => false
-        ]);
-    }
-
-}
-
 $layout_content = render_template('templates/layout.php', [
     'title' => 'Дела в порядке',
     'projects' => $projects,
     'tasks' => $tasks,
     'content' => $page_content,
-    'modal' => $modal,
+    'modal_add' => $modal_add,
 ]);
 
 print($layout_content);

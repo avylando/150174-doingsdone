@@ -40,7 +40,7 @@
         <label class="button button--transparent" for="preview">
             <span>Выберите файл</span>
         </label>
-        <p class="form__message"><?=$errors['task-image']?></p>
+        <p class="form__message"><?php isset($errors['task-image']) ? print($errors['task-image']) : '';?></p>
       </div>
     </div>
 

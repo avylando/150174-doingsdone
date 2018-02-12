@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<?php $classname = empty($modal) ? '' : 'overlay' ?>
+<?php $classname = empty($modal_add) ? '' : 'overlay' ?>
 <body class="<?=$classname?>"><!--class="overlay"-->
 <h1 class="visually-hidden">Дела в порядке</h1>
 
@@ -73,7 +73,7 @@
             <p>Веб-приложение для удобного ведения списка дел.</p>
         </div>
 
-        <a class="main-footer__button button button--plus">Добавить задачу</a>
+        <a class="main-footer__button button button--plus" href="../index.php?add">Добавить задачу</a>
 
         <div class="main-footer__social social">
             <span class="visually-hidden">Мы в соцсетях:</span>
@@ -103,7 +103,7 @@
         </div>
     </div>
 </footer>
-<?=$modal?>
+<?=$modal_add?>
 
 </body>
 </html>
