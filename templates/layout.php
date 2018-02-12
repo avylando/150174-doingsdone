@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
-
-<body><!--class="overlay"-->
+<?php $classname = empty($modal) ? '' : 'overlay' ?>
+<body class="<?=$classname?>"><!--class="overlay"-->
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
@@ -19,7 +19,7 @@
             </a>
 
             <div class="main-header__side">
-                <a class="main-header__side-item button button--plus" href="#">Добавить задачу</a>
+                <a class="main-header__side-item button button--plus" href="../index.php?add">Добавить задачу</a>
 
                 <div class="main-header__side-item user-menu">
                     <div class="user-menu__image">
@@ -48,7 +48,7 @@
                                 $active_class = '';
                             }?>
                         <li class="main-navigation__list-item <?=$active_class?>">
-                            <a class="main-navigation__list-item-link" href="#"><?=$category?></a>
+                            <a class="main-navigation__list-item-link" href="index.php?id=<?=$key?>"><?=$category?></a>
                             <span class="main-navigation__list-item-count"><?=task_counter($tasks, $category)?></span>
                         </li>
                     <?php endforeach; ?>
@@ -103,6 +103,7 @@
         </div>
     </div>
 </footer>
+<?=$modal?>
 
 </body>
 </html>
