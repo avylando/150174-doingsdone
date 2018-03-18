@@ -15,8 +15,8 @@
     </nav>
 
     <label class="checkbox">
-        <a href="/">
-            <?php if($show_complete_tasks === 1): ?>
+        <a href="/?show_completed">
+            <?php if(intval($show_completed) === 1): ?>
                 <input class="checkbox__input visually-hidden" type="checkbox" checked>
             <?php else: ?>
                 <input class="checkbox__input visually-hidden" type="checkbox">
@@ -29,23 +29,40 @@
 <?php if (isset($tasks)): ?>
     <table class="tasks">
         <?php foreach($tasks as $task): ?>
+            <?php if ($task['complete'] && intval($show_completed) === 1): ?>
+                <tr class="tasks__item task task--completed">
+                    <td class="task__select">
+                        <label class="checkbox task__checkbox">
+                            <input class="checkbox__input visually-hidden" type="checkbox" checked>
+                            <span class="checkbox__text"><?=strip_tags($task['title'])?></span>
+                        </label>
+                    </td>
 
-            <tr class="tasks__item task <?php $task['complete'] ? print('task--completed') : ''; ?>
-            <?php if (count_days($task['date']) <= 1 && $task['date'] !== ''): ?>
-                task--important
+                    <td class="task__date"><?=strip_tags($task['date'])?></td>
+
+                    <td class="task__controls"></td>
+                </tr>
             <?php endif; ?>
-            ">
-                <td class="task__select">
-                    <label class="checkbox task__checkbox">
-                        <input class="checkbox__input visually-hidden" type="checkbox" checked>
-                        <span class="checkbox__text"><?=strip_tags($task['title'])?></span>
-                    </label>
-                </td>
 
-                <td class="task__date"><?=strip_tags($task['date'])?></td>
+            <?php if (!$task['complete']): ?>
 
-                <td class="task__controls"></td>
-            </tr>
+                <tr class="tasks__item task
+                <?php if (count_days($task['date']) <= 1 && $task['date'] !== ''): ?>
+                    task--important
+                <?php endif; ?>
+                ">
+                    <td class="task__select">
+                        <label class="checkbox task__checkbox">
+                            <input class="checkbox__input visually-hidden" type="checkbox" checked>
+                            <span class="checkbox__text"><?=strip_tags($task['title'])?></span>
+                        </label>
+                    </td>
+
+                    <td class="task__date"><?=strip_tags($task['date'])?></td>
+
+                    <td class="task__controls"></td>
+                </tr>
+            <?php endif; ?>
         <?php endforeach; ?>
     </table>
 <?php else: ?>

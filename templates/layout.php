@@ -8,16 +8,17 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <?php $classname = empty($modal_add) ? '' : 'overlay' ?>
-<body class="<?=$classname?>"><!--class="overlay"-->
+<body class="<?=$classname?>">
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
     <div class="container container--with-sidebar">
         <header class="main-header">
-            <a href="#">
+            <a href="/">
                 <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
             </a>
 
+            <?php if ($session['authorized']): ?>
             <div class="main-header__side">
                 <a class="main-header__side-item button button--plus" href="../index.php?add">Добавить задачу</a>
 
@@ -33,16 +34,23 @@
                     </div>
                 </div>
             </div>
+            <?php else: ?>
+
+            <div class="main-header__side">
+                <a class="main-header__side-item button button--transparent" href="/?login">Войти</a>
+            </div>
+            <?php endif;?>
         </header>
 
         <div class="content">
+        <?php if ($session['authorized']): ?>
             <section class="content__side">
                 <h2 class="content__side-heading">Проекты</h2>
 
                 <nav class="main-navigation">
                     <ul class="main-navigation__list">
                     <?php foreach ($projects as $key => $category): ?>
-                        <?php if ($key === 0) {
+                        <?php if ($key == $project_id) {
                                 $active_class = 'main-navigation__list-item--active';
                             } else {
                                 $active_class = '';
@@ -61,6 +69,9 @@
             <main class="content__main">
                 <?=$content?>
             </main>
+        <?php else: ?>
+            <?=$content?>
+        <?php endif;?>
         </div>
     </div>
 </div>
