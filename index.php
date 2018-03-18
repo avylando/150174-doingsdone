@@ -142,7 +142,7 @@ if (!empty($_SESSION)) {
 
             if (empty($errors)) {
                 try {
-                    $current_user = get_user_by_login($db_link, $login['email']);
+                    $current_user = search_user_by_email($db_link, $login['email']);
 
                     if (!empty($current_user)) {
                         if (password_verify($login['password'], $current_user['password'])) {
@@ -161,15 +161,17 @@ if (!empty($_SESSION)) {
                     $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
                 }
             }
-
-        } else {
-            $modal_add = render_template('templates/modal-authorization.php', []);
         }
 
-        $page_content = render_template('templates/guest.php', []);
+        $modal_add = render_template('templates/modal-authorization.php', [
+            'login' =>$login,
+            'errors' => $errors
+        ]);
+
+        $page_content = render_template('templates/guest.php');
 
     } else {
-        $page_content = render_template('templates/guest.php', []);
+        $page_content = render_template('templates/guest.php');
     }
 }
 
@@ -180,6 +182,7 @@ $layout_content = render_template('templates/layout.php', [
     'tasks' => $tasks,
     'content' => $page_content,
     'modal_add' => $modal_add,
+    'session' => check_authorization($_SESSION)
 ]);
 
 print($layout_content);
