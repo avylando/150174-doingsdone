@@ -6,19 +6,19 @@ function render_template($template_file_path, $data = []) {
     if (file_exists($template_file_path)) {
         ob_start();
         extract($data);
-        require_once $template_file_path;
+        include $template_file_path;
         return ob_get_clean();
     }
 
     return '';
 }
 
-function task_counter ($tasks, $category) {
+function task_counter ($tasks, $project) {
     $counter = 0;
     foreach ($tasks as $task) {
-        if ($task['category'] === $category) {
+        if ($task['project'] === $project) {
             $counter++;
-        } else if ($category === 'Все') {
+        } else if ($project === 'Все') {
             $counter++;
         }
     }
@@ -61,6 +61,70 @@ function search_user_by_email($connect, $email) {
     }
 
     return $current_user = mysqli_fetch_assoc($result);
+}
+
+
+function get_user_tasks($connect, $user_id) {
+    if (!$connect) {
+        throw new Exception(mysqli_connect_error());
+    }
+
+    $sql = "SELECT task.name, file, expiration_date, complete_date, project.name AS project, project.id AS project_id
+            FROM task
+            INNER JOIN project ON project.id = project_id
+            WHERE task.author_id = ?";
+
+    $stmt = db_get_prepare_stmt($connect, $sql, [$user_id]);
+    mysqli_stmt_execute($stmt);
+
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (!$result) {
+        throw new Exception(mysqli_error($connect));
+    }
+    $tasks = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    // print_r($tasks);
+    return $tasks;
+}
+
+function get_user_projects($connect, $user_id) {
+    if (!$connect) {
+        throw new Exception(mysqli_connect_error());
+    }
+
+    $sql = "SELECT id, name FROM project
+            WHERE project.author_id = ?";
+
+    $stmt = db_get_prepare_stmt($connect, $sql, [$user_id]);
+    mysqli_stmt_execute($stmt);
+
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (!$result) {
+        throw new Exception(mysqli_error($connect));
+    }
+
+    return $projects = mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+function add_task($connect, $task, $user_id) {
+    if (!$connect) {
+        throw new Exception(mysqli_connect_error());
+    }
+
+    $sql = "INSERT INTO task(name, project_id, file, expiration_date, author_id)
+            VALUES(?, ?, ?, ?, ?)";
+
+    $stmt = db_get_prepare_stmt($connect, $sql, [$task['name'], $task['project'], $task['file'], $task['expiration_date'], $user_id]);
+    mysqli_stmt_execute($stmt);
+
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (!$result) {
+        throw new Exception(mysqli_error($connect));
+    }
+
+    return $result;
 }
 
 ?>

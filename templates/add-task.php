@@ -15,14 +15,15 @@
 
     <div class="form__row">
       <label class="form__label" for="project">Проект <sup>*</sup></label>
-      <?php $validity = isset($errors['category']) ? 'form__input--error' : '';
-        $value = isset($task['category']) ? $task['category'] : ''; ?>
-      <select class="form__input form__input--select <?=$validity?>" name="category" id="project">
-        <?php foreach ($projects as $category): ?>
-            <option value="<?=$category?>" <?php $task['category'] === $category ? print('selected') : ''?>><?=$category?></option>
+      <?php $validity = isset($errors['project']) ? 'form__input--error' : '';
+        $value = isset($task['project']) ? $task['project'] : ''; ?>
+        <!-- <?php print_r($projects)?> -->
+      <select class="form__input form__input--select <?=$validity?>" name="project" id="project">
+        <?php foreach ($projects as $project): ?>
+            <option value="<?=$project['id']?>" <?php $task['project'] === $project['name'] ? print('selected') : ''?>><?=$project['name']?></option>
         <?php endforeach; ?>
       </select>
-      <p class="form__message"><?=$errors['category']?></p>
+      <p class="form__message"><?=$errors['project']?></p>
     </div>
 
     <div class="form__row">

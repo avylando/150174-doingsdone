@@ -7,8 +7,7 @@
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<?php $classname = empty($modal_add) ? '' : 'overlay' ?>
-<body class="<?=$classname?>">
+<body class="">
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
@@ -20,7 +19,7 @@
 
             <?php if ($session['authorized']): ?>
             <div class="main-header__side">
-                <a class="main-header__side-item button button--plus" href="../index.php?add">Добавить задачу</a>
+                <button class="main-header__side-item button button--plus button-add">Добавить задачу</button>
 
                 <div class="main-header__side-item user-menu">
                     <div class="user-menu__image">
@@ -49,15 +48,15 @@
 
                 <nav class="main-navigation">
                     <ul class="main-navigation__list">
-                    <?php foreach ($projects as $key => $category): ?>
-                        <?php if ($key == $project_id) {
+                    <?php foreach ($projects as $project): ?>
+                        <?php if (intval($project['id']) === $project_id || ($project_id === 0 && $project['name'] === 'Все')) {
                                 $active_class = 'main-navigation__list-item--active';
                             } else {
                                 $active_class = '';
                             }?>
                         <li class="main-navigation__list-item <?=$active_class?>">
-                            <a class="main-navigation__list-item-link" href="index.php?id=<?=$key?>"><?=$category?></a>
-                            <span class="main-navigation__list-item-count"><?=task_counter($tasks, $category)?></span>
+                            <a class="main-navigation__list-item-link" href="index.php?id=<?=$project['name'] === 'Все' ? 0 : $project['id']?>"><?=$project['name']?></a>
+                            <span class="main-navigation__list-item-count"><?=task_counter($tasks, $project['name'])?></span>
                         </li>
                     <?php endforeach; ?>
                     </ul>
@@ -114,7 +113,7 @@
         </div>
     </div>
 </footer>
-<?=$modal_add?>
 
+<script src="js/modal.js"></script>
 </body>
 </html>

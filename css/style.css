@@ -173,8 +173,8 @@ a:focus {
 
 .modal {
   position: fixed;
-  top: 50%;
-  left: 50%;
+  top: 15%;
+  left: 30%;
   z-index: 3;
 
   width: 445px;
@@ -182,7 +182,8 @@ a:focus {
   padding: 25px 30px;
 
   background-color: #ffffff;
-  transform: translate(-50%, -50%);
+  transform: translateY(0);
+  transition: 0.6s;
 }
 
 .modal__close {
@@ -198,6 +199,11 @@ a:focus {
 
   background: transparent url("../img/icon-close.svg") no-repeat 50% 50%;
   border: 0;
+}
+
+.modal--hide {
+  transform: translateY(-1000px);
+  transition: 0.6s;
 }
 
 .main-header {

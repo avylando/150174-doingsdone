@@ -9,120 +9,75 @@ $tasks = [];
 $projects = [];
 $project_id = 0;
 $modal_add = null;
+$show_completed = 0;
+
+if (isset($_COOKIE["showcompl"])) {
+    $show_completed = (intval($_COOKIE["showcompl"]) === 1) ? 0 : 1;
+}
+
+if (isset($_GET["show_completed"])) {
+    setcookie("showcompl", $show_completed, strtotime("+5 days"), "/");
+    header("Location: " . $_SERVER["HTTP_REFERER"]);
+}
 
 if (!empty($_SESSION)) {
 
-    $filtered_tasks = [];
-    $show_completed = 0;
-
-    if (isset($_GET['show_completed'])) {
-
-        if (isset($_COOKIE['showcompl'])) {
-            $_COOKIE['showcompl'] == 1 ? setcookie('showcompl', 0, strtotime('+5 days')) : setcookie('showcompl', 1, strtotime('+5 days'));
-            $show_completed = $_COOKIE['showcompl'];
-
-        } else {
-            setcookie('showcompl', 1, strtotime('+5 days'));
-            $show_completed = 1;
-        }
+    if (isset($_SESSION['user']['id'])) {
+        $tasks = get_user_tasks($db_link, $_SESSION['user']['id']);
+        $projects = get_user_projects($db_link, $_SESSION['user']['id']);
     }
 
-    if (isset($_GET['add'])) {
-        $modal_add = render_template('templates/add-task.php', [
-            'projects' => array_slice($projects, 1)
-        ]);
-    }
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add-task'])) {
-
-        if (isset($_POST['add-task'])) {
-            $task = $_POST;
-            $required = ['title', 'category'];
-            $dict = [
-                'title' => 'название задачи',
-                'category' => 'Выберите проект'
-            ];
-
-            $errors = [];
-
-            foreach ($required as $field) {
-
-                if (empty($task[$field])) {
-                    $errors[$field] = 'Заполните ' . $dict[$field];
-                }
-            }
-
-            if (is_uploaded_file($_FILES['task-image']['tmp_name'])) {
-                $tmp_name = $_FILES['task-image']['tmp_name'];
-                $path = 'img/' . $_FILES['task-image']['name'];
-
-                $file_info = finfo_open(FILEINFO_MIME_TYPE);
-                $file_type = finfo_file($file_info, $tmp_name);
-
-                if ($file_type !== 'image/jpeg' && $file_type !== 'image/png' && $file_type !== 'image/gif') {
-                    $errors['task-image'] = 'Неподдерживаемый формат. Загрузите файл в формате JPG/PNG/GIF';
-
-                } else {
-                    move_uploaded_file($tmp_name, $path);
-                    $task['task-image'] = $path;
-                }
-            }
-
-            if (count($errors)) {
-                $modal_add = render_template('templates/add-task.php', [
-                    'task' => $task,
-                    'errors' => $errors,
-                    'projects' => array_slice($projects, 1)
-                ]);
-
-            } else {
-                array_unshift($tasks, [
-                'title' => $task['title'],
-                'date' => $task['date'],
-                'category' => $task['category'],
-                'task-image' => $task['task-image'],
-                'complete' => false
-                ]);
-            }
-        }
-    }
+    $project_id = intval($_GET['id']) ?? 0;
 
     if (isset($_GET['id'])) {
-        $project_id = $_GET['id'];
+        $filtered_tasks = [];
 
-        if (isset($projects[$project_id])) {
+        if ($project_id === 0) {
+            $filtered_tasks = $tasks;
 
-            foreach ($tasks as $task) {
-                if ($task['category'] === $projects[$project_id]) {
-                    array_push($filtered_tasks, $task);
-                }
-
-                if ($projects[$project_id] === 'Все') {
-                    array_push($filtered_tasks, $task);
-                }
+        } else {
+            $arr = [];
+            $pro_ids = [];
+            foreach ($projects as $index => $project) {
+                $arr[$index] = intval($project['id']);
             }
 
+            $pro_ids = array_unique($arr);
+
+            if (in_array($project_id, $pro_ids)) {
+                foreach ($tasks as $task) {
+                    if (intval($task['project_id']) === $project_id) {
+                        array_push($filtered_tasks, $task);
+                    }
+                }
+
+            } else {
+                $page_content = render_template('templates/error.php', [
+                    'error' => 'Проект не найден'
+                ]);
+                http_response_code(404);
+            }
+        }
+
+        if (empty($page_content)) {
             $page_content = render_template('templates/index.php', [
+                'projects' => $projects,
+                'project_id' => $project_id,
                 'show_completed' => $show_completed,
                 'tasks' => $filtered_tasks
             ]);
-
-        } else {
-            $page_content = render_template('templates/error.php', [
-                'error' => 'Проект не найден'
-            ]);
-            http_response_code(404);
         }
 
     } else {
         $page_content = render_template('templates/index.php', [
+            'projects' => $projects,
+            'project_id' => $project_id,
             'show_completed' => $show_completed,
             'tasks' => $tasks
         ]);
     }
 
 } else {
-
     if (isset($_GET['login'])) {
         $errors = [];
 
@@ -175,13 +130,14 @@ if (!empty($_SESSION)) {
     }
 }
 
+// print($page_content);
+
 $layout_content = render_template('templates/layout.php', [
     'title' => 'Дела в порядке',
     'projects' => $projects,
     'project_id' => $project_id,
     'tasks' => $tasks,
     'content' => $page_content,
-    'modal_add' => $modal_add,
     'session' => check_authorization($_SESSION)
 ]);
 
