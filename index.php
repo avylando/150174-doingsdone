@@ -10,6 +10,7 @@ $projects = [];
 $project_id = 0;
 $modal_add = null;
 $show_completed = 0;
+$errors = [];
 
 if (isset($_COOKIE["showcompl"])) {
     $show_completed = (intval($_COOKIE["showcompl"]) === 1) ? 0 : 1;
@@ -78,59 +79,16 @@ if (!empty($_SESSION)) {
     }
 
 } else {
-    if (isset($_GET['login'])) {
-        $errors = [];
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enter'])) {
-            $login = $_POST;
-            $required = ['email', 'password'];
-            $dict = [
-                'email' => 'E-mail',
-                'password' => 'пароль'
-            ];
-
-            foreach ($required as $field) {
-                if (empty($login[$field])) {
-                    $errors[$field] = 'Введите ' .$dict[$field];
-                }
-            }
-
-            if (empty($errors)) {
-                try {
-                    $current_user = search_user_by_email($db_link, $login['email']);
-
-                    if (!empty($current_user)) {
-                        if (password_verify($login['password'], $current_user['password'])) {
-                            $_SESSION['user'] = $current_user;
-                            header('Location: /index.php');
-                            exit();
-                        }
-
-                        $errors['password'] = 'Вы ввели неверный пароль';
-
-                    } else {
-                        $errors['email'] = 'Пользователь не найден';
-                    }
-
-                } catch (Exception $error)  {
-                    $page_content = render_template('templates/error.php', ['error' => $error->getMessage()]);
-                }
-            }
-        }
-
-        $modal_add = render_template('templates/modal-authorization.php', [
-            'login' =>$login,
-            'errors' => $errors
-        ]);
-
-        $page_content = render_template('templates/guest.php');
-
-    } else {
-        $page_content = render_template('templates/guest.php');
-    }
+    require_once 'login.php';
 }
 
-// print($page_content);
+if (isset($_GET['signup'])) {
+    require_once 'signup.php';
+}
+
+if (isset($_GET['add-task'])) {
+    require_once 'add-task.php';
+}
 
 $layout_content = render_template('templates/layout.php', [
     'title' => 'Дела в порядке',

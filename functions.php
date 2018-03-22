@@ -31,6 +31,15 @@ function count_days($expired_date) {
     return $days;
 }
 
+function format_date($date) {
+    if (strtotime($date)) {
+        $formatted_date = date('d-m-Y', strtotime($date));
+
+        return $formatted_date;
+    }
+    return 'Некорректный формат даты';
+}
+
 function check_authorization($session) {
     $result = [];
 
@@ -107,18 +116,37 @@ function get_user_projects($connect, $user_id) {
     return $projects = mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
+function add_user($connect, $data) {
+    if (!$connect) {
+        throw new Exception(mysqli_connect_error());
+    }
+
+    $sql = "INSERT INTO user(name, email, password, contacts)
+            VALUES(?, ?, ?, ?)";
+
+    $password = password_hash($data['password'], PASSWORD_DEFAULT);
+    $stmt = db_get_prepare_stmt($connect, $sql, [$data['username'], $data['email'], $password, $data['contacts']]);
+    $result = mysqli_stmt_execute($stmt);
+
+    if (!$result) {
+        throw new Exception(mysqli_error($connect));
+    }
+
+    return $result;
+}
+
 function add_task($connect, $task, $user_id) {
     if (!$connect) {
         throw new Exception(mysqli_connect_error());
     }
 
+    print_r($task);
+
     $sql = "INSERT INTO task(name, project_id, file, expiration_date, author_id)
             VALUES(?, ?, ?, ?, ?)";
 
-    $stmt = db_get_prepare_stmt($connect, $sql, [$task['name'], $task['project'], $task['file'], $task['expiration_date'], $user_id]);
-    mysqli_stmt_execute($stmt);
-
-    $result = mysqli_stmt_get_result($stmt);
+    $stmt = db_get_prepare_stmt($connect, $sql, [$task['name'], $task['project'], $task['attach'], $task['expiration_date'], $user_id]);
+    $result = mysqli_stmt_execute($stmt);
 
     if (!$result) {
         throw new Exception(mysqli_error($connect));

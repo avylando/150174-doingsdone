@@ -201,6 +201,20 @@ a:focus {
   border: 0;
 }
 
+.modal-success {
+  min-height: 100px;
+}
+
+.modal-success .modal__heading {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.button-success {
+  display: block;
+  margin: 0 auto;
+}
+
 .modal--hide {
   transform: translateY(-1000px);
   transition: 0.6s;
@@ -749,6 +763,7 @@ a:focus {
 }
 
 .form__message {
+  min-height: 12px;
   margin: 0;
   margin-top: 2px;
 

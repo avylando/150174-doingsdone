@@ -17,9 +17,9 @@
                 <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
             </a>
 
-            <?php if ($session['authorized']): ?>
+            <?php if (isset($session['authorized'])): ?>
             <div class="main-header__side">
-                <button class="main-header__side-item button button--plus button-add">Добавить задачу</button>
+                <button class="main-header__side-item button button--plus button--add">Добавить задачу</button>
 
                 <div class="main-header__side-item user-menu">
                     <div class="user-menu__image">
@@ -36,13 +36,13 @@
             <?php else: ?>
 
             <div class="main-header__side">
-                <a class="main-header__side-item button button--transparent" href="/?login">Войти</a>
+                <button class="main-header__side-item button button--transparent button--login">Войти</button>
             </div>
             <?php endif;?>
         </header>
 
         <div class="content">
-        <?php if ($session['authorized']): ?>
+        <?php if (isset($session['authorized'])): ?>
             <section class="content__side">
                 <h2 class="content__side-heading">Проекты</h2>
 
@@ -82,9 +82,11 @@
 
             <p>Веб-приложение для удобного ведения списка дел.</p>
         </div>
-
-        <a class="main-footer__button button button--plus" href="../index.php?add">Добавить задачу</a>
-
+        <?php if (isset($session['authorized'])):?>
+            <button class="main-footer__button button button--plus button--add">Добавить задачу</button>
+        <?php else:?>
+            <button class="main-footer__button button button--plus button--add" disabled>Добавить задачу</button>
+        <?php endif;?>
         <div class="main-footer__social social">
             <span class="visually-hidden">Мы в соцсетях:</span>
             <a class="social__link social__link--facebook" href="#">Facebook
@@ -114,6 +116,90 @@
     </div>
 </footer>
 
-<script src="js/modal.js"></script>
+<div class="modal modal-add-task modal--hide">
+  <button class="modal__close" type="button" name="button">Закрыть</button>
+
+  <h2 class="modal__heading">Добавление задачи</h2>
+
+  <form class="form form-add-task" action="index.php?add-task" method="post" enctype="multipart/form-data">
+
+    <div class="form__row form__row--name">
+      <label class="form__label" for="name">Название <sup>*</sup></label>
+      <input class="form__input" type="text" name="name" id="task-name" placeholder="Введите название">
+      <p class="form__message"></p>
+    </div>
+
+    <div class="form__row form__row--project">
+      <label class="form__label" for="project">Проект <sup>*</sup></label>
+
+      <select class="form__input form__input--select" name="project" id="task-project">
+        <?php foreach ($projects as $project): ?>
+            <option value="<?=$project['id']?>" <?php $task['project'] === $project['name'] ? print('selected') : ''?>><?=$project['name']?></option>
+        <?php endforeach; ?>
+      </select>
+      <p class="form__message"></p>
+    </div>
+
+    <div class="form__row form__row--date">
+      <label class="form__label" for="expiration_date">Дата выполнения</label>
+      <input class="form__input form__input--date" type="date" name="expiration_date" id="date" placeholder="Введите дату в формате ДД.ММ.ГГГГ">
+    </div>
+
+    <div class="form__row form__row--attach">
+      <label class="form__label" for="preview">Файл</label>
+
+      <div class="form__input-file">
+        <input class="visually-hidden" type="file" name="attach" id="preview" value="">
+
+        <label class="button button--transparent" for="preview">
+            <span>Выберите файл</span>
+        </label>
+        <p class="form__message"></p>
+      </div>
+    </div>
+
+    <div class="form__row form__row--controls">
+      <button class="button" type="submit" name="add-task">Добавить</button>
+    </div>
+  </form>
+</div>
+
+<div class="modal modal-login modal--hide">
+  <button class="modal__close" name="button">Закрыть</button>
+
+  <h2 class="modal__heading">Вход на сайт</h2>
+
+  <form class="form form-login" action="/?login" method="post">
+    <div class="form__row form__row--email">
+      <label class="form__label" for="email">E-mail <sup>*</sup></label>
+
+      <input class="form__input" type="text" name="email" id="email" placeholder="Введите e-mail">
+      <p class="form__message"></p>
+    </div>
+
+    <div class="form__row form__row--password">
+      <label class="form__label" for="password">Пароль <sup>*</sup></label>
+
+      <input class="form__input" type="password" name="password" id="password" placeholder="Введите пароль">
+      <p class="form__message"></p>
+    </div>
+
+    <div class="form__row form__row--controls">
+      <input class="button" type="submit" name="enter" value="Войти">
+    </div>
+  </form>
+</div>
+
+<div class="modal modal-success modal--hide">
+  <button class="modal__close" name="button">Закрыть</button>
+
+  <h2 class="modal__heading">Поздравляем с успешной регистрацией!</h2>
+
+  <button class="button button-success" type="button" name="enter">Войти на сайт</button>
+</div>
+
+<script src="js/ajax.js" defer></script>
+<script src="js/modal.js" defer></script>
+<script src="js/form.js" defer></script>
 </body>
 </html>
