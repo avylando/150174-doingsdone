@@ -4,6 +4,7 @@
   var formAuth = document.querySelector('.form-login'),
       formSignup = document.querySelector('.form-signup'),
       formAddTask = document.querySelector('.form-add-task'),
+      formProject = document.querySelector('.form-project'),
       modalSuccess = document.querySelector('.modal-success');
 
   function createMessage(parent, message) {
@@ -121,6 +122,16 @@
     }
   }
 
+  function onProjectSuccess(response) {
+    if (response === 'Введите название проекта' || response === 'В названии должно быть более 3х символов') {
+      createMessage(projectNameCell, response);
+    }
+
+    if (response === 'Project added!') {
+      window.location.replace('/index.php');
+    }
+  }
+
   function onError(message) {
     console.log(message);
   }
@@ -160,6 +171,17 @@
       cleanErrors(formAddTask);
       var formData = new FormData(formAddTask);
       window.ajax.save(formData, onTaskAddSuccess, onError, '/index.php?add-task');
+      evt.preventDefault();
+    });
+  }
+
+  if (formProject) {
+    var projectNameCell = formProject.querySelector('.form__row--name');
+
+    formProject.addEventListener('submit', function(evt) {
+      cleanErrors(formProject);
+      var formData = new FormData(formProject);
+      window.ajax.save(formData, onProjectSuccess, onError, '/index.php?project');
       evt.preventDefault();
     });
   }

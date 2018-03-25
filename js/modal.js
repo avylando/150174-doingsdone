@@ -4,9 +4,15 @@
   var modalAdd = document.querySelector('.modal-add-task'),
       modalAddClose = modalAdd.querySelector('.modal__close'),
       openAddBtns = document.querySelectorAll('.button--add'),
+
+      modalProject = document.querySelector('.modal-project'),
+      modalProjectClose = modalProject.querySelector('.modal__close'),
+      openProjectBtn = document.querySelector('.button--project'),
+
       modalLogin = document.querySelector('.modal-login'),
       modalLoginClose = modalLogin.querySelector('.modal__close'),
       openLoginBtns = document.querySelectorAll('.button--login'),
+
       modalSuccess = document.querySelector('.modal-success'),
       modalSuccessClose = modalSuccess.querySelector('.modal__close'),
       btnSuccess = modalSuccess.querySelector('.button-success');
@@ -50,6 +56,16 @@
 
         modalLoginClose.addEventListener('click', function() {
           modalCloseHandler(modalLogin);
+        });
+      }
+
+      if (openProjectBtn) {
+        openProjectBtn.addEventListener('click', function() {
+          modalShowHandler(modalProject);
+        });
+
+        modalProjectClose.addEventListener('click', function() {
+          modalCloseHandler(modalProject);
         });
       }
 

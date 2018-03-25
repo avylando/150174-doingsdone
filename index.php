@@ -90,6 +90,10 @@ if (isset($_GET['add-task'])) {
     require_once 'add-task.php';
 }
 
+if (isset($_GET['project'])) {
+    require_once 'add-project.php';
+}
+
 $layout_content = render_template('templates/layout.php', [
     'title' => 'Дела в порядке',
     'projects' => $projects,

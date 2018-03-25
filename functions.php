@@ -135,17 +135,53 @@ function add_user($connect, $data) {
     return $result;
 }
 
-function add_task($connect, $task, $user_id) {
+function add_default_projects($connect, $user_id) {
     if (!$connect) {
         throw new Exception(mysqli_connect_error());
     }
 
+    $sql = "INSERT INTO project(name, author_id)
+            VALUES(?, ?), (?, ?)";
+
+    $stmt = db_get_prepare_stmt($connect, $sql, ['Все', $user_id, 'Входящие', $user_id]);
+    $result = mysqli_stmt_execute($stmt);
+
+    if (!$result) {
+        throw new Exception(mysqli_error($connect));
+    }
+
+    return $result;
+}
+
+function add_task($connect, $task, $user_id) {
     print_r($task);
+    if (!$connect) {
+        throw new Exception(mysqli_connect_error());
+    }
 
     $sql = "INSERT INTO task(name, project_id, file, expiration_date, author_id)
             VALUES(?, ?, ?, ?, ?)";
 
     $stmt = db_get_prepare_stmt($connect, $sql, [$task['name'], $task['project'], $task['attach'], $task['expiration_date'], $user_id]);
+    $result = mysqli_stmt_execute($stmt);
+    print_r($result);
+    if (!$result) {
+        throw new Exception(mysqli_error($connect));
+    }
+
+    return $result;
+}
+
+function add_project($connect, $project, $user_id) {
+    if (!$connect) {
+        throw new Exception(mysqli_connect_error());
+    }
+
+    $sql = "INSERT INTO project(name, author_id)
+            VALUES(?, ?)";
+
+    $project_name = mysqli_real_escape_string($connect, $project['name']);
+    $stmt = db_get_prepare_stmt($connect, $sql, [$project_name, $user_id]);
     $result = mysqli_stmt_execute($stmt);
 
     if (!$result) {

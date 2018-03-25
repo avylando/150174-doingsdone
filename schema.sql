@@ -24,8 +24,8 @@ CREATE TABLE task (
   name CHAR(255) NOT NULL,
   project_id INT NOT NULL,
   file CHAR(128),
-  expiration_date DATETIME,
-  complete_date DATETIME,
+  expiration_date DATETIME NULL DEFAULT NULL,
+  complete_date DATETIME NULL DEFAULT NULL,
   author_id INT NOT NULL,
   CONSTRAINT FK_TaskAuthor FOREIGN KEY (author_id) REFERENCES user(id),
   CONSTRAINT FK_TaskProject FOREIGN KEY (project_id) REFERENCES project(id)

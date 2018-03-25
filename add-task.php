@@ -5,7 +5,7 @@ require_once 'init.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $task = $_POST;
     // $task
-    // print_r($_POST);
+    print_r($_POST);
     $required = ['name', 'project'];
     $dict = [
         'name' => 'название задачи',
@@ -40,9 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         try {
-            $task['attach'] = $task['attach'] ?? null;
-            $user_id = $_SESSION['user']['id'] ?? 0;
-            // print($user_id);
+            strval($task['expiration_date']) === '' ? 'NULL' : $task['expiration_date'];
+            $task['attach'] = $task['attach'] ?? 'NULL';
+            $user_id = $_SESSION['user']['id'] ?? 'NULL';
+
             $result = add_task($db_link, $task, $user_id);
 
             if ($result) {

@@ -62,7 +62,7 @@
                     </ul>
                 </nav>
 
-                <a class="button button--transparent button--plus content__side-button" href="#">Добавить проект</a>
+                <button class="button button--transparent button--plus content__side-button button--project">Добавить проект</button>
             </section>
 
             <main class="content__main">
@@ -134,14 +134,16 @@
 
       <select class="form__input form__input--select" name="project" id="task-project">
         <?php foreach ($projects as $project): ?>
-            <option value="<?=$project['id']?>" <?php $task['project'] === $project['name'] ? print('selected') : ''?>><?=$project['name']?></option>
+            <?php if ($project['name'] !== 'Все'):?>
+            <option value="<?=$project['id']?>"><?=$project['name']?></option>
+            <?php endif;?>
         <?php endforeach; ?>
       </select>
       <p class="form__message"></p>
     </div>
 
     <div class="form__row form__row--date">
-      <label class="form__label" for="expiration_date">Дата выполнения</label>
+      <label class="form__label" for="date">Дата выполнения</label>
       <input class="form__input form__input--date" type="date" name="expiration_date" id="date" placeholder="Введите дату в формате ДД.ММ.ГГГГ">
     </div>
 
@@ -160,6 +162,26 @@
 
     <div class="form__row form__row--controls">
       <button class="button" type="submit" name="add-task">Добавить</button>
+    </div>
+  </form>
+</div>
+
+<div class="modal modal-project modal--hide">
+  <button class="modal__close" type="button" name="button">Закрыть</button>
+
+  <h2 class="modal__heading">Добавление проекта</h2>
+
+  <form class="form form-project" action="index.php?project" method="post">
+    <div class="form__row form__row--name">
+      <label class="form__label" for="project_name">Название <sup>*</sup></label>
+
+      <input class="form__input" type="text" name="name" id="project_name" value="" placeholder="Введите название проекта">
+
+      <p class="form__message"></p>
+    </div>
+
+    <div class="form__row form__row--controls">
+      <input class="button" type="submit" name="" value="Добавить">
     </div>
   </form>
 </div>

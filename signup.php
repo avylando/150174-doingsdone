@@ -52,11 +52,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit();
             }
 
-            $result = add_user($db_link, $signup);
+            mysqli_query($db_link, "START TRANSACTION");
 
-            if ($result) {
+            $res1 = add_user($db_link, $signup);
+
+            $user_id = mysqli_insert_id($db_link);
+
+            $res2 = add_default_projects($db_link, $user_id);
+
+            if ($res1 && $res2) {
+                mysqli_query($db_link, "COMMIT");
                 echo 'Sign up!';
                 exit();
+
+            } else {
+                mysqli_query($db_link, "ROLLBACK");
             }
 
         } catch (Exception $error)  {
