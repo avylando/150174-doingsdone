@@ -132,7 +132,7 @@ function add_user($connect, $data) {
         throw new Exception(mysqli_connect_error());
     }
 
-    $sql = "INSERT INTO user(name, email, password, contacts)
+    $sql = "INSERT INTO user(name, email, password, phone)
             VALUES(?, ?, ?, ?)";
 
     $password = password_hash($data['password'], PASSWORD_DEFAULT);
