@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="">
+<body class="<?=$title ==='Добро пожаловать!' ? 'body-background' : ''?>">
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
-    <div class="container container--with-sidebar">
+    <div class="container <?=$title ==='Добро пожаловать!' ? '' : 'container--with-sidebar'?>">
         <header class="main-header">
             <a href="/">
                 <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
@@ -29,7 +29,7 @@
                     <div class="user-menu__data">
                         <p><?=$session['user']['name']?></p>
 
-                        <a href="logout.php">Выйти</a>
+                        <a href="assets/logout.php">Выйти</a>
                     </div>
                 </div>
             </div>
@@ -55,7 +55,7 @@
                                 $active_class = '';
                             }?>
                         <li class="main-navigation__list-item <?=$active_class?>">
-                            <a class="main-navigation__list-item-link" href="index.php?id=<?=$project['name'] === 'Все' ? 0 : $project['id']?>"><?=$project['name']?></a>
+                            <a class="main-navigation__list-item-link" href="index.php?project_id=<?=$project['name'] === 'Все' ? 0 : $project['id']?>"><?=$project['name']?></a>
                             <span class="main-navigation__list-item-count"><?=task_counter($tasks, $project['name'])?></span>
                         </li>
                     <?php endforeach; ?>
@@ -151,7 +151,7 @@
       <label class="form__label" for="preview">Файл</label>
 
       <div class="form__input-file">
-        <input class="visually-hidden" type="file" name="attach" id="preview" value="">
+        <input class="visually-hidden" type="file" name="file" id="preview" value="">
 
         <label class="button button--transparent" for="preview">
             <span>Выберите файл</span>
@@ -223,5 +223,6 @@
 <script src="js/ajax.js" defer></script>
 <script src="js/modal.js" defer></script>
 <script src="js/form.js" defer></script>
+<script src="js/task-actions.js" defer></script>
 </body>
 </html>

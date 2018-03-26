@@ -8,7 +8,7 @@ CREATE TABLE user (
   name CHAR(128) NOT NULL,
   email CHAR(128) NOT NULL,
   password CHAR(64) NOT NULL,
-  contacts CHAR(255)
+  phone CHAR(255)
 );
 
 CREATE TABLE project (

@@ -5,6 +5,7 @@
       formSignup = document.querySelector('.form-signup'),
       formAddTask = document.querySelector('.form-add-task'),
       formProject = document.querySelector('.form-project'),
+      searchForm = document.querySelector('.search-form'),
       modalSuccess = document.querySelector('.modal-success');
 
   function createMessage(parent, message) {
@@ -185,5 +186,13 @@
       evt.preventDefault();
     });
   }
+
+  // if (searchForm) {
+  //   searchForm.addEventListener('submit', function(evt) {
+  //     var formData = new FormData(searchForm);
+  //     window.ajax.save(formData, onError, onError, '/index.php?search');
+  //     evt.preventDefault();
+  //   });
+  // }
 
 })();
